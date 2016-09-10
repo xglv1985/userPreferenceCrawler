@@ -8,11 +8,15 @@ class crawler:
         self.mongodbInit()
         
     def mongodbInit(self):
-        client = pymongo.MongoClient("localhost", 27017)
-        self.db = client.musicpreference
+        self.client = pymongo.MongoClient("localhost", 27017)
         
-    def getDb(self):
-        return self.db.musicpreference
+    def getMusciPreferenceDb(self):
+        db = self.client.musicpreference
+        return db.musicpreference
+    
+    def isUserInDb(self, userId):
+        userNum = self.getMusciPreferenceDb().count({"userId" : userId})
+        return userNum > 0
     
     def person2music(self, url):
         print url
@@ -36,7 +40,7 @@ class crawler:
             if linkUrl.find("https://music.douban.com/subject/") != -1: 
                 print '    ' + linkUrl
                 hobby.append(getMusicIdFromMusicUrl(linkUrl))
-        self.getDb().insert_one({"userId": name, "hobbyList": hobby})
+        self.getMusciPreferenceDb().insert_one({"userId": name, "hobbyList": hobby})
     
     def crawl(self, pages, depth = 10):
         visited = set()
@@ -44,6 +48,10 @@ class crawler:
             newpages = set()
             for page in pages:
                 visited.add(page)
+                userId = getNameFromUserSite(page)
+                if self.isUserInDb(userId):
+                    print 'userId is visited db %s' % userId
+                    continue
                 try:
                     c = urllib2.urlopen(page)
                 except:
@@ -78,6 +86,14 @@ def isPersonSite(url):
         return True
     return False
 
+def getNameFromUserSite(url):
+    prefix = "https://www.douban.com/people/"
+    res = url.split(prefix)
+    suffix = res[1]
+    nameList = suffix.split('/')
+    
+    return nameList[0]
+
 def getNameFromMusicCollect(url):
     prefix = "https://music.douban.com/people/"
     res = url.split(prefix)
@@ -96,7 +112,7 @@ def getMusicIdFromMusicUrl(url):
             
 def main():
     crawle = crawler()
-    crawle.crawl(['https://www.douban.com/people/53489022/'])
+    crawle.crawl(['https://www.douban.com/people/65269166/'])
 
 if __name__ == '__main__':
     main()
