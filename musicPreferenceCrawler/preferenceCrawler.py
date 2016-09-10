@@ -2,6 +2,7 @@ import urllib2
 from BeautifulSoup import *
 from urlparse import urljoin
 import pymongo
+import time
 
 class crawler:
     def __init__(self):
@@ -52,11 +53,15 @@ class crawler:
                 if self.isUserInDb(userId):
                     print 'userId is visited db %s' % userId
                     continue
-                try:
-                    c = urllib2.urlopen(page)
-                except:
-                    print "Could not open without login %s" % page
-                    continue
+                retryTime = 0
+                while retryTime < 10:
+                    try:
+                        c = urllib2.urlopen(page)
+                        break;
+                    except:
+                        print "Could not open without login %s" % page
+                        time.sleep(3)
+                        continue
                 try:
                     soup = BeautifulSoup(c.read())
                 except:
@@ -112,7 +117,7 @@ def getMusicIdFromMusicUrl(url):
             
 def main():
     crawle = crawler()
-    crawle.crawl(['https://www.douban.com/people/65269166/'])
+    crawle.crawl(['https://www.douban.com/people/miester/'])
 
 if __name__ == '__main__':
     main()
