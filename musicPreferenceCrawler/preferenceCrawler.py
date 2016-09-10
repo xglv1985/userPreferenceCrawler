@@ -23,10 +23,14 @@ class crawler:
         print url
         name = getNameFromMusicCollect(url)
         hobby = []
-        try:
-            c = urllib2.urlopen(url)
-        except:
-            print "Could not open %s" % url
+        retryTime = 0
+        while retryTime < 10:
+            try:
+                c = urllib2.urlopen(url)
+                break
+            except:
+                print "Could not open %s" % url
+        if retryTime == 10:
             return
         try:
             soup = BeautifulSoup(c.read())
@@ -43,12 +47,15 @@ class crawler:
                 hobby.append(getMusicIdFromMusicUrl(linkUrl))
         self.getMusciPreferenceDb().insert_one({"userId": name, "hobbyList": hobby})
     
-    def crawl(self, pages, depth = 10):
+    def crawl(self, pages, depth = 20):
         visited = set()
         for i in range(depth):
             newpages = set()
             for page in pages:
                 visited.add(page)
+                print len(visited)
+                if len(visited) == 200:
+                    visited = set()
                 userId = getNameFromUserSite(page)
                 if self.isUserInDb(userId):
                     print 'userId is visited db %s' % userId
@@ -61,7 +68,8 @@ class crawler:
                     except:
                         print "Could not open without login %s" % page
                         time.sleep(3)
-                        continue
+                if retryTime == 10:
+                    continue
                 try:
                     soup = BeautifulSoup(c.read())
                 except:
@@ -70,6 +78,8 @@ class crawler:
                 
                 links = soup('a')
                 for link in links:
+                    if not link.has_key('href'):
+                        continue
                     linkUrl = link['href']
                     if linkUrl.find("https://music") != -1 and linkUrl.find("collect") != -1: 
                         self.person2music(linkUrl)
@@ -117,7 +127,7 @@ def getMusicIdFromMusicUrl(url):
             
 def main():
     crawle = crawler()
-    crawle.crawl(['https://www.douban.com/people/fengs/'])
+    crawle.crawl(['https://www.douban.com/people/66134751/'])
 
 if __name__ == '__main__':
     main()
