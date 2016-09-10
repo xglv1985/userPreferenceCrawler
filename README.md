@@ -1,11 +1,11 @@
 # userPreferenceCrawler
-This project crawls some user preferences from douban but will not use it for business.
+This is a python project, and it crawls some user preferences from douban but will not use them for business.
 
-Make sure you have a mongodb server in your own computer or has one in a remote server to restore the crawled data.
+Make sure you have a local or a remote mongodb server to restore the crawled data.
 
-You must reference BeautifulSoup and pymongo to run it after you pull the project to local
+You must refer two third-party packages: BeautifulSoup and pymongo, to run it after you pull the project to local
 
-这个项目爬取了豆瓣上的用户偏好，但不会用于商业目的。
+这个是个python项目，它爬取了豆瓣上的用户偏好，但不会用于商业目的。
 
 确保你的电脑上装了mongodb或者有一台远程mongodb服务器，用来存储爬取到的数据。
 
