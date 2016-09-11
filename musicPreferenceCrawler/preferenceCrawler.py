@@ -127,7 +127,7 @@ def getMusicIdFromMusicUrl(url):
             
 def main():
     crawle = crawler()
-    crawle.crawl(['https://www.douban.com/people/66134751/'])
+    crawle.crawl(['https://www.douban.com/people/ruilixiurui/'])
 
 if __name__ == '__main__':
     main()
