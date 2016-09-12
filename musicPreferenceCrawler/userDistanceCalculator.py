@@ -39,7 +39,7 @@ class calculator:
         db = self.client.musicDistance
         return db.musicDistance
         
-    def loadAllUserPreferences(self, distance = absolutelyCommonCount):
+    def calcDistanceBetweenEveryPairOfUsers(self, distance = tanimoto):
         cursor1 = self.getMusicPreferenceDb().find()
         res = [{'userId': item['userId'], 'distanceList': []} for item in cursor1]
         cursor = self.getMusicPreferenceDb().find()
@@ -59,24 +59,12 @@ class calculator:
                 j += 1
             
             print res[i]
-            
-            nearest = 1.0
-            nearestUser = ''
-            for item in res[i]['distanceList']:
-                if item['distance'] < nearest:
-                    nearest = item['distance']
-                    nearestUser = item['userId']
-            print nearestUser + ' ' + str(nearest)
-            print res[i]['userId'] + ' over'
+            self.getDistanceDb().insert_one(res[i])
             i += 1
-                
-        for item in res.items():
-            self.getDistanceDb().insert_one(item)
 
 def main():
     calc = calculator()
-    calc.loadAllUserPreferences()
-#     calc.test()
+    calc.calcDistanceBetweenEveryPairOfUsers()
     
 
 if __name__ == '__main__':
