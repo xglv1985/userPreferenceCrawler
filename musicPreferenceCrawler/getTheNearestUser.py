@@ -17,7 +17,7 @@ for item in cursor:
             nearestDistance = ele['distance']
             nearestUser = ele['userId']
     print str(i) + ' The nearest neighbor of user ' + userId + ' is ' + nearestUser + ', with the distance of ' + str(nearestDistance)
-    if nearestDistance < globalNearestDistance:
+    if nearestDistance < globalNearestDistance and nearestDistance > 0:
         globalNearestDistance = nearestDistance
         nearestPair[0] = userId
         nearestPair[1] = nearestUser
